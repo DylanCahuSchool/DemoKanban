@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	<div class="container mt-5">
+		<div id="formContainer" style="display: none;"></div>
+		<div class="row">
+			{% for status in ['To Do', 'In Progress', 'Done'] %}
+				<div class="col text-center">
+					<h2>{{ status }}</h2>
+					<a href="#" onclick="showForm('{{ path('app_task_new', {'status': status}) }}')" class="btn btn-secondary btn-sm mb-3 w-100">+</a>
+					{% set tasksWithStatus = tasks|filter(task => task.status == status) %}
+					{% for task in tasksWithStatus %}
+						<div class="card shadow">
+							<div class="card-body">
+								<h5 class="card-title">{{ task.Name }}</h5>
+								<p class="card-text">{{ task.Description }}</p>
+								<p class="card-text">{{ task.creationDate ? task.creationDate|date('Y-m-d') : '' }}</p>
+								<p class="card-text">{{ task.endDate ? task.endDate|date('Y-m-d') : '' }}</p>
+								{# <a href="{{ path('app_task_show', {'id': task.id}) }}" class="btn btn-primary">Show</a> #}
+								<a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn btn-primary">Edit</a>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				<!-- Add a separator after each column except the last one -->
+				{% if not loop.last %}
+					<div class="col-0"></div>
+					<div class="col-0 border-left"></div>
+				{% endif %}
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	 <script>
+		function showForm(url) {
+		    $.get(url, function(data) {
+		        $('#formContainer').html(data);
+		        $('#formContainer').show();
+		    });
+		}
+		</script>
+{% endblock %}
